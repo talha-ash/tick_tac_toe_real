@@ -1,0 +1,51 @@
+Phoenix's real-time interface is built on two default public abstractions, a socket interface, 
+through which a client connects - this is usually a websocket (although it can fall back to longpolling 
+or use other transports), this is the "wire" that is created between a client and your server. Usually 
+you mediate this connection through means of a token, to decide if the client is able to open that socket 
+connection. It's specified in user_socket.ex.
+
+And then you have the channel interface, which is a gen_server with specific handles (api) tailored 
+to receive incoming messages through the "wire". You can also have authorising logic to allow 
+subscription to a channel ("joining"), and it can vary by channel (or even topic).
+
+Each client can be connected to 1 socket and 0 to N channels. A client being connected to a channel, 
+underneath, is simply (simplified) registering a given socket to a Publisher Subscriber interface
+ (Phoenix's PubSub) and having a process for those "channel:room" for each socket subscribed to 
+ that particular combination.
+
+If you fire up :observer.start from your iex shell, and go to the Processes tab, and then join, from 
+two different clients, the same exact "channel:topic" you'll see there will be two channel processes, 
+not one. If you see the Application tree from the Elixir.YourWeb.PubSub.Local0 you'll also see 
+2 processes "connected" to/from it.
+
+This means that when you issue a channel.leave() from your front-end, your server unsubscribes
+ this client from the "channel" you just "left", and the process that was handling it gets shut down. 
+ A channel leave is unsubscribing a specific socket (client) from that particular channel:topic 
+ combination. This doesn't interfere with other clients connected to that same topic. In this 
+ case, the socket (the "wire") is still connected. You can re-join the channel, or join others
+  without having to "ask" (negotiate) to connect to the socket again.
+
+On the other hand if you issue socket.disconnect() you're "plugging off the wire", and consequently 
+unsubscribing that particular socket (client) from all the channels it was previously subscribed. 
+This makes all processes related to that given socket to shutdown, but also doesn't interfere with 
+other client's sockets/connections/subscriptions.
+
+If all clients leave a given channel (either through "leave" or "disconnect"ing their sockets), 
+you'll see that there won't be any process running for that given channel. As soon as 
+another client joins that channel, a process for that specific client & channel:topic is created.
+
+tldr; to answer your question:
+
+1) no
+
+2) no
+
+But if you have long running processes that are spawned from inside the channel itself, that should be shut down when no client is connected to that particular channel:topic, then you will need to make sure you clean them up of course. Besides the usual monitoring capabilities of Erlang, Phoenix has a Presence interface, that allows you to track that too.
+
+--------------------------------------------------------------------------
+
+{:shutdown, :left } when i explicitly leave channel from client side
+{:shutdown, :closed } when i implicitly channel left from client side or server error
+
+
+-----------------------------------------------------------------------------

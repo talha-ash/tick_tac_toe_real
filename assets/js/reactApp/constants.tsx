@@ -1,0 +1,9 @@
+export const LAUGH = "LAUGH";
+export const HEAD_SHOT = "HEAD_SHOT";
+export const PLAYER_TURN = "player_turn";
+export const PLAYER_GIVE_IN = "player_give_in";
+export const SHOW_REACTION = "show_reaction";
+export const MATCH_END = "match_end";
+export const MATCH_STOP_UNEXPECTED = "match_stop_unexpected";
+export const PLAY_GAME = "play_game";
+export const MATCH_FOUND = "match_found";
