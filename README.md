@@ -1,4 +1,13 @@
 # TickTacToeReal
+Two Player Tick Tac Toe  Game 
+Match making When more then one player want to play game
+
+Total In Memory Game using Elixir Concurrency Primitives
+
+## For Demo Visit
+https://tick-tac-real.fly.dev/
+
+## For Local Server Run
 
 To start your Phoenix server:
 
@@ -8,11 +17,3 @@ To start your Phoenix server:
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
