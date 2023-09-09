@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { Home, Lobby, Match } from "./pages";
 import { GameMatchChannel, GameLobbyChannel } from "./channels";
+import useLobbyStore from "./stores/lobbyStore";
 // Create a root route
 const rootRoute = new RootRoute({
   component: Root,
@@ -22,6 +23,11 @@ const indexRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/",
   component: Home,
+  beforeLoad: () => {
+    if (useLobbyStore.getState().user) {
+      throw redirect({ to: "/lobby" });
+    }
+  },
 });
 
 const lobbyRoute = new Route({

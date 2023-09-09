@@ -10,6 +10,7 @@ import MatchReaction from "../components/matchReaction";
 import { boardBoxNumberType } from "../types";
 export default function Match() {
   const matchStore = useMatchStore((state) => state);
+  const resetLobbyStore = useLobbyStore((state) => state.actions.reset);
   const navigate = useNavigate();
   const user = useLobbyStore((state) => state.user)!;
   const isMyTurn = matchStore.turn.name === user.name;
@@ -30,6 +31,7 @@ export default function Match() {
 
   const onGiveIn = () => {
     matchStore.actions.resetStore();
+    resetLobbyStore();
     navigate({ to: "/" });
     GameMatchChannel.handlePlayerGiveIn(user.name);
   };
@@ -51,6 +53,7 @@ export default function Match() {
       setTimeout(() => {
         if (matchStore.winner) {
           matchStore.actions.resetStore();
+          resetLobbyStore();
           alert(`${matchStore.winner.name} Win Game`);
         } else {
           alert("Game Draw");

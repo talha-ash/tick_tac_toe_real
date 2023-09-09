@@ -12,6 +12,7 @@ import {
   PLAYER_TURN,
   SHOW_REACTION,
 } from "../constants";
+import useLobbyStore from "../stores/lobbyStore";
 class GameMatchChannel {
   channel: Channel | null = null;
   matchId: string = "";
@@ -103,6 +104,7 @@ class GameMatchChannel {
 
     this.channel.on(PLAYER_GIVE_IN, (payload: any) => {
       this.matchStoreActions.resetStore();
+      useLobbyStore.getState().actions.reset();
       router.navigate({ to: "/" });
       this.onLeave();
       alert(`Player ${payload.player_name} Give In`);
@@ -110,6 +112,7 @@ class GameMatchChannel {
 
     this.channel.on(MATCH_STOP_UNEXPECTED, (payload: any) => {
       this.matchStoreActions.resetStore();
+      useLobbyStore.getState().actions.reset();
       router.navigate({ to: "/" });
       this.channel = null;
       this.matchId = "";

@@ -6,6 +6,7 @@ export type lobbyStoreActionsType = {
   updatesUsers: (payload: usersListType) => void;
   setUser: (payload: IUser) => void;
   toggleFindingRival: (payload: boolean | null) => void;
+  reset: () => void;
 };
 
 export interface ILobbyStore {
@@ -34,6 +35,12 @@ const useLobbyStore = create(
         set((state) => {
           state.findingRival =
             findingRival !== null ? findingRival : !state.findingRival;
+        }),
+      reset: () =>
+        set((state) => {
+          state.users = [];
+          state.user = null;
+          state.findingRival = false;
         }),
     },
   }))

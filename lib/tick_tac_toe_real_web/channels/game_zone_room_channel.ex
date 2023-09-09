@@ -2,7 +2,7 @@ defmodule TickTacToeRealWeb.GameZoneRoomChannel do
   use Phoenix.Channel
   alias TickTacToeRealWeb.Presence
   alias TickTacToeReal.MatchMakingGenServer
-
+  @impl true
   def join("gamezone:lobby", message, socket) do
     name = Map.get(message, "name")
     list = Presence.list(socket)
@@ -17,6 +17,7 @@ defmodule TickTacToeRealWeb.GameZoneRoomChannel do
     end
   end
 
+  @impl true
   def handle_info(:after_join, socket) do
     Presence.track(socket, socket.assigns.name, %{
       online_at: inspect(System.system_time(:second))
@@ -26,6 +27,7 @@ defmodule TickTacToeRealWeb.GameZoneRoomChannel do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({:match_found, match}, socket) do
     broadcast(socket, "match_found", %{
       players: Enum.map(match.players, fn player -> player.name end),
@@ -35,9 +37,18 @@ defmodule TickTacToeRealWeb.GameZoneRoomChannel do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_in("play_game", %{"name" => name}, socket) do
     # broadcast!(socket, "new_msg", %{body: body})
     MatchMakingGenServer.add_player(name)
     {:reply, {:ok, %{}}, socket}
+  end
+
+  @impl true
+  def terminate(reason, socket) do
+    if {:shutdown, :closed} == reason do
+      IO.inspect(socket.assigns.name, label: "Leaving Lobby")
+      MatchMakingGenServer.remove_player(socket.assigns.name)
+    end
   end
 end
